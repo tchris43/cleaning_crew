@@ -1,15 +1,45 @@
 "use client";
-import React, { useState, useEffect, useMemo } from "react";
-import { useSearchParams } from 'next/navigation';
+
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import WeekPicker from "./week-picker";
 import { VEHICLE_SIZE_GUIDE } from "../lib/vehicle-size-guide";
-import SuccessModal from "./success-modal";
+import { BOOKING_CONFIRMATION_KEY } from "../lib/booking-confirmation";
 import { SERVICE_TIERS, ADDONS, TierId, VehicleSize } from "../lib/services";
+import { formatLocalDate, formatTimeLabel } from "../lib/slots";
+
+function getBookingErrorMessages(json: unknown, status: number): string[] {
+  if (json && typeof json === "object") {
+    const body = json as {
+      code?: string;
+      message?: string;
+      errors?: Array<{ path: string; message: string }>;
+    };
+
+    if (body.code === "BLOCK_FULL") {
+      return ["That time slot is full. Please choose another time."];
+    }
+
+    if (body.errors?.length) {
+      return body.errors.map((error) => error.message);
+    }
+
+    if (body.message) {
+      return [body.message];
+    }
+  }
+
+  if (status >= 500) {
+    return ["Server error. Please try again in a moment."];
+  }
+
+  return ["Something went wrong. Please try again."];
+}
 
 export default function BookingForm() {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  
-  // Form State
+
   const [tier, setTier] = useState<TierId>("BASIC_REFRESH");
   const [vehicleSize, setVehicleSize] = useState<VehicleSize>("SMALL");
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
@@ -18,35 +48,35 @@ export default function BookingForm() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [notes, setNotes] = useState("");
-  
-  // UI State
-  const [isSizeModalOpen, setIsSizeModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
-  const [success, setSuccess] = useState(false);
-  const [successDetails, setSuccessDetails] = useState<any>(null);
+  const sizeGuideRef = useRef<HTMLDetailsElement>(null);
 
-  // Preload Tier from URL
+  function openSizeGuide(e: React.MouseEvent<HTMLAnchorElement>) {
+    e.preventDefault();
+    sizeGuideRef.current?.setAttribute("open", "");
+    sizeGuideRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   useEffect(() => {
-    const t = searchParams?.get('tier') as TierId;
+    const t = searchParams?.get("tier") as TierId;
     if (t && SERVICE_TIERS[t]) {
       setTier(t);
     }
   }, [searchParams]);
 
-  // Price Calculation
   const totalPrice = useMemo(() => {
-    let base = SERVICE_TIERS[tier].prices[vehicleSize];
-    let addonsTotal = selectedAddons.reduce((acc, addonId) => {
-      const addon = ADDONS.find(a => a.id === addonId);
+    const base = SERVICE_TIERS[tier].prices[vehicleSize];
+    const addonsTotal = selectedAddons.reduce((acc, addonId) => {
+      const addon = ADDONS.find((a) => a.id === addonId);
       return acc + (addon?.basePrice || 0);
     }, 0);
     return base + addonsTotal;
   }, [tier, vehicleSize, selectedAddons]);
 
   const toggleAddon = (id: string) => {
-    setSelectedAddons(prev => 
-      prev.includes(id) ? prev.filter(a => a !== id) : [...prev, id]
+    setSelectedAddons((prev) =>
+      prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id]
     );
   };
 
@@ -65,7 +95,7 @@ export default function BookingForm() {
       email,
       serviceTier: tier,
       vehicleSize,
-      appointmentDate: appointmentDate.toISOString().split('T')[0],
+      appointmentDate: formatLocalDate(appointmentDate),
       appointmentTime,
       notes: notes || undefined,
       addons: selectedAddons
@@ -81,17 +111,21 @@ export default function BookingForm() {
       const json = await res.json();
 
       if (!res.ok) {
-        setErrors([json?.message || "Something went wrong. Please try again."]);
+        setErrors(getBookingErrorMessages(json, res.status));
       } else {
-        setSuccess(true);
-        setSuccessDetails({ 
-          date: payload.appointmentDate, 
-          time: appointmentTime, 
-          tier: SERVICE_TIERS[tier].title, 
-          vehicle: vehicleSize 
-        });
+        sessionStorage.setItem(
+          BOOKING_CONFIRMATION_KEY,
+          JSON.stringify({
+            date: payload.appointmentDate,
+            time: formatTimeLabel(appointmentTime),
+            tier: SERVICE_TIERS[tier].title,
+            vehicle: vehicleSize,
+            email: payload.email
+          })
+        );
+        router.push("/book/success");
       }
-    } catch (err) {
+    } catch {
       setErrors(["Network error. Please try again."]);
     } finally {
       setLoading(false);
@@ -99,168 +133,211 @@ export default function BookingForm() {
   }
 
   return (
-    <div className="w-full">
-      <div className="mb-10 text-center">
-        <h1 className="flyer-heading text-4xl md:text-6xl font-black uppercase tracking-tighter text-[#20263F]">
-          Secure Your Slot
-        </h1>
-        <p className="mt-4 text-lg font-medium text-[#20263F]/60 max-w-2xl mx-auto">
-          Confirm your professional detailing appointment in seconds.
+    <div className="mx-auto w-full max-w-3xl">
+      <div className="page-intro">
+        <h1>Book Appointment</h1>
+        <p>
+          <span className="font-semibold text-[#20263F]">{SERVICE_TIERS[tier].title}</span>
+          <span className="mx-1.5 text-[#20263F]/35">·</span>
+          <span>from ${SERVICE_TIERS[tier].prices[vehicleSize]}</span>
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-10">
-        <div className="grid gap-8 md:grid-cols-2">
-          {/* Service & Size Section */}
-          <section className="space-y-6 rounded-3xl border-2 border-[#20263F]/10 bg-white p-6 shadow-sm">
-            <h4 className="flyer-heading text-lg font-bold uppercase text-[#20263F] border-b border-[#20263F]/5 pb-2">1. Vehicle & Service</h4>
-            
-            <div className="space-y-4">
-              <div>
-                <label className="block text-[0.65rem] font-black uppercase tracking-widest text-[#20263F]/50 mb-1">Service Tier</label>
-                <select 
-                  className="w-full rounded-xl border-2 border-[#20263F]/10 bg-[#F0F2F5] p-3 font-bold text-[#20263F] outline-none focus:border-[#20263F]"
-                  value={tier}
-                  onChange={(e) => setTier(e.target.value as TierId)}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid gap-6 md:grid-cols-2">
+          <section className="form-section space-y-4">
+            <h2 className="form-step-title">1. Vehicle & Service</h2>
+            <div>
+              <label className="form-label" htmlFor="serviceTier">
+                Service tier
+              </label>
+              <select
+                id="serviceTier"
+                className="field-input mt-0 font-medium"
+                value={tier}
+                onChange={(e) => setTier(e.target.value as TierId)}
+              >
+                {Object.values(SERVICE_TIERS).map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {t.title}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <div className="mb-1 flex items-baseline justify-between gap-2">
+                <label className="form-label mb-0" htmlFor="vehicleSize">
+                  Vehicle size
+                </label>
+                <a
+                  href="#size-guide"
+                  onClick={openSizeGuide}
+                  className="text-xs font-semibold text-[#20263F]/65 underline-offset-2 hover:text-[#20263F] hover:underline"
                 >
-                  {Object.values(SERVICE_TIERS).map(t => (
-                    <option key={t.id} value={t.id}>{t.title}</option>
-                  ))}
-                </select>
+                  Size guide
+                </a>
               </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-[0.65rem] font-black uppercase tracking-widest text-[#20263F]/50">Vehicle Size</label>
-
-                </div>
-                <select 
-                  className="w-full rounded-xl border-2 border-[#20263F]/10 bg-[#F0F2F5] p-3 font-bold text-[#20263F] outline-none focus:border-[#20263F]"
-                  value={vehicleSize}
-                  onChange={(e) => setVehicleSize(e.target.value as VehicleSize)}
-                >
-                  <option value="SMALL">Sedans, Coupes, Small Trucks</option>
-                  <option value="MID-SIZED">Small 3rd row, larger trucks</option>
-                  <option value="LARGE">Full-sized SUVs, minivans</option>
-                </select>
-              </div>
+              <select
+                id="vehicleSize"
+                className="field-input mt-0 font-medium"
+                value={vehicleSize}
+                onChange={(e) => setVehicleSize(e.target.value as VehicleSize)}
+              >
+                <option value="SMALL">Small — sedans, 2-rows, small trucks</option>
+                <option value="MID-SIZED">Mid-sized — small 3rd rows, larger trucks</option>
+                <option value="LARGE">Large — full-sized SUVs, minivans</option>
+              </select>
             </div>
           </section>
 
-          {/* Contact Section */}
-          <section className="space-y-6 rounded-3xl border-2 border-[#20263F]/10 bg-white p-6 shadow-sm">
-            <h4 className="flyer-heading text-lg font-bold uppercase text-[#20263F] border-b border-[#20263F]/5 pb-2">2. Contact Info</h4>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-[0.65rem] font-black uppercase tracking-widest text-[#20263F]/50 mb-1">Phone Number</label>
-                <input 
-                  type="tel"
-                  required
-                  className="w-full rounded-xl border-2 border-[#20263F]/10 bg-[#F0F2F5] p-3 font-bold text-[#20263F] outline-none focus:border-[#20263F]"
-                  placeholder="385-___-____"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                />
-              </div>
-              <div>
-                <label className="block text-[0.65rem] font-black uppercase tracking-widest text-[#20263F]/50 mb-1">Email Address</label>
-                <input 
-                  type="email"
-                  required
-                  className="w-full rounded-xl border-2 border-[#20263F]/10 bg-[#F0F2F5] p-3 font-bold text-[#20263F] outline-none focus:border-[#20263F]"
-                  placeholder="name@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
+          <section className="form-section space-y-4">
+            <h2 className="form-step-title">2. Contact info</h2>
+            <div>
+              <label className="form-label" htmlFor="phone">
+                Phone number
+              </label>
+              <input
+                id="phone"
+                type="tel"
+                required
+                className="field-input mt-0 font-medium"
+                placeholder="385-555-1234"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="form-label" htmlFor="email">
+                Email address
+              </label>
+              <input
+                id="email"
+                type="email"
+                required
+                className="field-input mt-0 font-medium"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
           </section>
         </div>
 
-        {/* Add-ons Section */}
-        <section className="space-y-4 rounded-3xl border-2 border-[#20263F]/10 bg-white p-6 shadow-sm">
-          <h4 className="flyer-heading text-lg font-bold uppercase text-[#20263F]">3. Additional Surcharges</h4>
-          <div className="grid gap-3 sm:grid-cols-3">
-            {ADDONS.map(addon => (
-              <label key={addon.id} className={`flex items-center gap-3 rounded-xl border-2 p-3 cursor-pointer transition-colors ${selectedAddons.includes(addon.id) ? 'bg-[#20263F]/5 border-[#20263F]' : 'bg-[#F0F2F5] border-transparent hover:border-[#20263F]/20'}`}>
-                <input 
+        <section className="form-section space-y-3">
+          <h2 className="form-step-title">3. Condition surcharges (optional)</h2>
+          <p className="text-sm text-[#20263F]/65">
+            Select any that may apply. Final pricing is confirmed after inspection.
+          </p>
+          <div className="grid gap-2 sm:grid-cols-3">
+            {ADDONS.map((addon) => (
+              <label
+                key={addon.id}
+                className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition ${
+                  selectedAddons.includes(addon.id)
+                    ? "border-[#20263F]/25 bg-white shadow-sm"
+                    : "border-transparent bg-white/70 hover:border-[#20263F]/15"
+                }`}
+              >
+                <input
                   type="checkbox"
                   checked={selectedAddons.includes(addon.id)}
                   onChange={() => toggleAddon(addon.id)}
-                  className="h-4 w-4 accent-[#20263F]"
+                  className="mt-0.5 h-4 w-4 accent-[#20263F]"
                 />
-                <div className="leading-tight">
-                  <p className="text-[0.65rem] font-black uppercase text-[#20263F]">{addon.label}</p>
-                  <p className="text-[0.6rem] font-bold text-[#20263F]/40">+${addon.basePrice}</p>
+                <div className="leading-snug">
+                  <p className="text-sm font-medium text-[#20263F]">{addon.label}</p>
+                  <p className="text-xs text-[#20263F]/50">from +${addon.basePrice}</p>
                 </div>
               </label>
             ))}
           </div>
         </section>
 
-        {/* Scheduling Section */}
-        <section className="space-y-4 rounded-3xl border-2 border-[#20263F]/10 bg-white p-6 shadow-sm">
-          <h4 className="flyer-heading text-lg font-bold uppercase text-[#20263F]">4. Appointment Date & Time</h4>
-          <WeekPicker 
+        <section className="form-section space-y-4">
+          <h2 className="form-step-title">4. Date & time</h2>
+          <WeekPicker
             selectedDate={appointmentDate}
             selectedTime={appointmentTime}
-            onChange={(d, t) => {
-              setAppointmentDate(d);
-              setAppointmentTime(t);
+            onChange={(date, time) => {
+              setAppointmentDate(date);
+              setAppointmentTime(time);
             }}
           />
         </section>
 
-        {/* Pricing & Submit */}
-        <div className="flex flex-col items-center justify-between gap-6 pt-10 border-t border-[#20263F]/10 md:flex-row">
-          <div className="text-center md:text-left">
-            <p className="text-[0.6rem] font-black uppercase tracking-widest text-[#20263F]/40">Estimated Total</p>
-            <div className="flex items-baseline gap-2">
-              <span className="text-5xl font-black text-[#20263F]">${totalPrice}</span>
-              <span className="text-sm font-bold text-[#20263F]/30 uppercase tracking-widest">Base</span>
-            </div>
+        <section className="form-section space-y-2">
+          <label className="form-label" htmlFor="notes">
+            Notes (optional)
+          </label>
+          <textarea
+            id="notes"
+            rows={3}
+            className="field-input mt-0 resize-y font-medium"
+            placeholder="Vehicle details, access instructions, or special requests"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+          />
+        </section>
+
+        <div className="flex flex-col items-stretch justify-between gap-4 rounded-2xl border border-[#20263F]/10 bg-[#FAFBFC] p-5 md:flex-row md:items-center">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-[#20263F]/45">
+              Estimated total
+            </p>
+            <p className="mt-1 text-3xl font-semibold text-[#20263F]">${totalPrice}</p>
+            {selectedAddons.length > 0 && (
+              <p className="mt-1 text-xs text-[#20263F]/55">Includes selected surcharges</p>
+            )}
           </div>
-          
-          <div className="w-full md:w-auto">
-            {errors.length > 0 && <p className="mb-2 text-xs font-bold text-red-500 uppercase text-center">{errors[0]}</p>}
-            <button 
-              type="submit" 
+
+          <div className="md:min-w-[220px]">
+            {errors.length > 0 && (
+              <div className="mb-2 text-center text-sm text-red-600 md:text-right">
+                {errors.map((error) => (
+                  <p key={error}>{error}</p>
+                ))}
+              </div>
+            )}
+            <button
+              type="submit"
               disabled={loading}
-              className="w-full rounded-2xl bg-[#E5C66E] px-20 py-6 text-xl font-black uppercase tracking-widest text-[#20263F] shadow-[0_10px_20px_-5px_rgba(229,198,110,0.4)] transition-all hover:scale-[1.02] hover:bg-[#D9A62E] active:scale-95 disabled:opacity-50 md:w-auto"
+              className="btn-primary w-full py-3 text-base disabled:opacity-60"
             >
-              {loading ? "Sending..." : "Complete Booking"}
+              {loading ? "Sending…" : "Complete booking"}
             </button>
           </div>
         </div>
       </form>
 
-      <details className="mt-2">
-        <summary className="cursor-pointer text-sm underline text-[#20263F]">Size Guide</summary>
-        <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+      <details
+        id="size-guide"
+        ref={sizeGuideRef}
+        className="mt-8 scroll-mt-6 rounded-xl border border-[#20263F]/10 bg-[#FAFBFC] p-4"
+      >
+        <summary className="cursor-pointer text-sm font-semibold text-[#20263F]">
+          Vehicle size guide
+        </summary>
+        <div className="mt-4 grid gap-4 sm:grid-cols-3">
           {VEHICLE_SIZE_GUIDE.map((category) => (
-            <article key={category.size} className={`rounded-xl border-2 border-[#20263F]/5 p-6 shadow-sm ${category.badgeClass}`}>
-              <div className="inline-flex rounded-full bg-white/40 px-4 py-1 text-2xl font-black text-[#20263F]">
+            <article
+              key={category.size}
+              className={`rounded-xl p-4 ${category.cardClass}`}
+            >
+              <div className="size-guide-pill inline-flex rounded-full px-3 py-1 text-sm font-semibold text-[#20263F]">
                 {category.size}
               </div>
-              <p className="mt-3 text-xs font-bold uppercase tracking-wider text-[#20263F]/60 px-1">{category.description}</p>
-              <ul className="mt-4 space-y-1.5 text-sm font-medium text-[#20263F]">
+              <p className="mt-2 text-xs font-medium uppercase tracking-wide text-[#20263F]/55">
+                {category.description}
+              </p>
+              <ul className="mt-2 grid grid-cols-2 gap-x-2 gap-y-0.5 text-xs text-[#20263F]/90">
                 {category.vehicles.map((vehicle) => (
-                  <li key={vehicle} className="flex items-center gap-2">
-                    <span className="h-1 w-1 rounded-full bg-[#20263F]/20"></span>
-                    {vehicle}
-                  </li>
+                  <li key={vehicle}>{vehicle}</li>
                 ))}
               </ul>
             </article>
           ))}
         </div>
       </details>
-      
-      <SuccessModal 
-        open={success} 
-        onClose={() => setSuccess(false)} 
-        details={successDetails} 
-      />
     </div>
   );
 }

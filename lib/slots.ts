@@ -8,6 +8,42 @@ export const TIME_SLOTS: Record<TimeBlock, string[]> = {
   EVENING: ["18:00", "18:30", "19:00", "19:30", "20:00"]
 };
 
+export const TIME_BLOCK_LABELS: Record<TimeBlock, string> = {
+  MORNING: "Morning · 9 AM – 12 PM",
+  AFTERNOON: "Afternoon · 12 PM – 4 PM",
+  EVENING: "Evening · 6 PM – 9 PM"
+};
+
+export function getTimeBlocksForDay(dayOfWeek: number): TimeBlock[] {
+  if (dayOfWeek === 0) return [];
+
+  const blocks: TimeBlock[] = ["MORNING"];
+
+  if (dayOfWeek === 2 || dayOfWeek === 4) {
+    blocks.push("AFTERNOON");
+  }
+
+  if (dayOfWeek === 1 || dayOfWeek === 3) {
+    blocks.push("EVENING");
+  }
+
+  return blocks;
+}
+
+export function formatLocalDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+export function formatTimeLabel(slot: string): string {
+  const [hours, minutes] = slot.split(":").map(Number);
+  const suffix = hours >= 12 ? "PM" : "AM";
+  const normalizedHour = hours % 12 === 0 ? 12 : hours % 12;
+  return `${normalizedHour}:${String(minutes).padStart(2, "0")} ${suffix}`;
+}
+
 export function getTimeBlockForAppointmentTime(appointmentTime: string): TimeBlock | null {
   for (const [timeBlock, slots] of Object.entries(TIME_SLOTS) as Array<[TimeBlock, string[]]>) {
     if (slots.includes(appointmentTime)) {
@@ -48,4 +84,25 @@ export function getBookingWindow(referenceDate = new Date()) {
 export function isWithinBookingWindow(appointmentDate: string, referenceDate = new Date()): boolean {
   const { earliestBookingDate, latestBookingDate } = getBookingWindow(referenceDate);
   return appointmentDate >= earliestBookingDate && appointmentDate <= latestBookingDate;
+}
+
+function startOfLocalDay(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+}
+
+export function isBookableDay(day: Date, referenceDate = new Date()): boolean {
+  if (getTimeBlocksForDay(day.getDay()).length === 0) {
+    return false;
+  }
+
+  if (startOfLocalDay(day) < startOfLocalDay(referenceDate)) {
+    return false;
+  }
+
+  return isWithinBookingWindow(formatLocalDate(day), referenceDate);
+}
+
+export function parseLocalDateString(date: string): Date {
+  const [year, month, day] = date.split("-").map(Number);
+  return new Date(year, month - 1, day);
 }

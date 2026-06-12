@@ -1,4 +1,6 @@
 import { Resend } from "resend";
+import { ADDONS, SERVICE_TIERS, type TierId } from "./services";
+import { formatTimeLabel } from "./slots";
 import type { AppointmentRequest, CreateAppointmentRpcInput } from "../types/appointment";
 
 export interface BookingEmailSender {
@@ -6,18 +8,48 @@ export interface BookingEmailSender {
   sendCustomerNotification?(input: AppointmentRequest & { appointmentId: string }): Promise<void>;
 }
 
-function formatBookingDetails(input: AppointmentRequest & { appointmentId: string }) {
+function formatOwnerBookingDetails(input: CreateAppointmentRpcInput & { appointmentId: string }) {
+  const tierTitle = SERVICE_TIERS[input.serviceTier as TierId]?.title ?? input.serviceTier;
+  const addonLabels =
+    input.addons?.map((id) => ADDONS.find((addon) => addon.id === id)?.label ?? id) ?? [];
+
   return [
     `Appointment ID: ${input.appointmentId}`,
     `Phone: ${input.phone ?? ""}`,
     `Email: ${input.email ?? ""}`,
-    `Tier: ${input.serviceTier}`,
+    `Package: ${tierTitle}`,
     `Vehicle Size: ${input.vehicleSize}`,
     `Date: ${input.appointmentDate}`,
-    `Time: ${input.appointmentTime}`,
-    `Add-ons: ${input.addons?.length ? input.addons.join(", ") : "None"}`,
+    `Time: ${formatTimeLabel(input.appointmentTime)}`,
+    `Add-ons: ${addonLabels.length ? addonLabels.join(", ") : "None"}`,
     `Notes: ${input.notes ?? ""}`
   ].join("\n");
+}
+
+function formatCustomerOrderConfirmation(input: AppointmentRequest) {
+  const tierTitle = SERVICE_TIERS[input.serviceTier as TierId]?.title ?? input.serviceTier;
+  const addonLabels =
+    input.addons?.map((id) => ADDONS.find((addon) => addon.id === id)?.label ?? id) ?? [];
+
+  const lines = [
+    "Thank you for booking with Clean Crew Detailing!",
+    "",
+    `Phone: ${input.phone}`,
+    `Email: ${input.email}`,
+    `Package: ${tierTitle}`,
+    `Vehicle Size: ${input.vehicleSize}`,
+    `Date: ${input.appointmentDate}`,
+    `Time: ${formatTimeLabel(input.appointmentTime)}`,
+    `Add-ons: ${addonLabels.length ? addonLabels.join(", ") : "None"}`
+  ];
+
+  if (input.notes) {
+    lines.push(`Notes: ${input.notes}`);
+  }
+
+  lines.push("", "Contact 385-685-8941 for any questions.");
+
+  return lines.join("\n");
 }
 
 export function createResendBookingEmailSender(resendApiKey: string, ownerNotificationEmail: string): BookingEmailSender {
@@ -29,7 +61,7 @@ export function createResendBookingEmailSender(resendApiKey: string, ownerNotifi
         from: "Clean Crew Detailing <onboarding@resend.dev>",
         to: ownerNotificationEmail,
         subject: "New appointment booked",
-        text: formatBookingDetails(input)
+        text: formatOwnerBookingDetails(input)
       });
     },
     async sendCustomerNotification(input) {
@@ -40,8 +72,8 @@ export function createResendBookingEmailSender(resendApiKey: string, ownerNotifi
       await resend.emails.send({
         from: "Clean Crew Detailing <onboarding@resend.dev>",
         to: input.email,
-        subject: "Your appointment request was received",
-        text: formatBookingDetails(input)
+        subject: "Order Confirmation",
+        text: formatCustomerOrderConfirmation(input)
       });
     }
   };

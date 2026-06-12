@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import '../styles/globals.css';
 import Header from "../components/header";
+import IconAttribution from "../components/icon-attribution";
 
 export const metadata = {
   title: "Clean Crew Detailing",
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               {children}
             </div>
 
+            <IconAttribution />
             <div className="h-3 bg-[#20263F]" aria-hidden="true" />
           </div>
         </div>

@@ -1,17 +1,46 @@
+import Link from "next/link";
 import ServiceCard from "../components/service-card";
 import { VEHICLE_SIZE_GUIDE } from "../lib/vehicle-size-guide";
+
+const HOW_IT_WORKS = [
+  {
+    step: "1",
+    title: "Choose your package",
+    detail: "Pick a tier and vehicle size based on the flyer pricing."
+  },
+  {
+    step: "2",
+    title: "Select a time",
+    detail: "Book a slot that fits our posted business hours."
+  },
+  {
+    step: "3",
+    title: "We confirm details",
+    detail: "Submit your request — we'll reach out if anything else is needed."
+  }
+];
 
 export default function HomePage() {
   return (
     <main className="space-y-10 md:space-y-12">
-      <section className="rounded-xl bg-[#D9A62E] px-4 py-3 text-center">
-        <p className="flyer-heading text-sm font-semibold uppercase tracking-wide text-[#20263F] md:text-base">
-          First 20 customers receive a 10% discount
+      <section className="rounded-2xl border border-[#20263F]/10 bg-[#FAFBFC] px-5 py-6 text-center md:px-8 md:py-8">
+        <p className="text-xs font-semibold uppercase tracking-widest text-[#20263F]/45">
+          Interior detailing · Utah County
         </p>
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-[#20263F] md:text-3xl">
+          Professional car care, booked in minutes
+        </h1>
+        <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-[#20263F]/70 md:text-base">
+          See pricing, pick your package, and request an appointment — no accounts, no hassle.
+        </p>
+        <Link href="/book" className="btn-primary mt-5 inline-flex px-6 py-3 text-base">
+          Book appointment
+        </Link>
       </section>
 
-      <section>
-        <div className="grid grid-cols-3 items-stretch gap-2 sm:gap-4 md:gap-5">
+      <section id="services">
+        <div className="tier-cards-scroll">
+          <div className="tier-cards-grid">
           <ServiceCard
             tier="BASIC_REFRESH"
             title="Basic Interior Refresh"
@@ -52,21 +81,37 @@ export default function HomePage() {
             ]}
             prices={{ small: "$249", mid: "$299", large: "$349" }}
           />
+          </div>
         </div>
         <p className="mt-4 text-center text-xs font-medium text-[#20263F]/50">
           10% off for multiple vehicles
         </p>
       </section>
 
-      <section className="rounded-2xl border border-[#20263F]/10 bg-[#FAFBFC] p-5 md:p-7">
+      <section className="rounded-2xl border border-[#20263F]/10 bg-white p-5 md:p-7">
+        <h2 className="section-title">How it works</h2>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {HOW_IT_WORKS.map((item) => (
+            <article key={item.step} className="rounded-xl border border-[#20263F]/8 bg-[#FAFBFC] p-4">
+              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#20263F] text-sm font-semibold text-white">
+                {item.step}
+              </span>
+              <h3 className="mt-3 text-base font-semibold text-[#20263F]">{item.title}</h3>
+              <p className="mt-1 text-sm leading-relaxed text-[#20263F]/70">{item.detail}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section id="size-guide" className="rounded-2xl border border-[#20263F]/10 bg-[#FAFBFC] p-5 md:p-7">
         <h2 className="section-title">Vehicle Size Guide</h2>
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
           {VEHICLE_SIZE_GUIDE.map((category) => (
             <article
               key={category.size}
-              className={`rounded-xl border border-[#20263F]/8 bg-white p-4 shadow-sm sm:p-5 ${category.badgeClass}`}
+              className={`rounded-xl p-4 shadow-sm sm:p-5 ${category.cardClass}`}
             >
-              <div className="inline-flex rounded-full bg-white/60 px-3 py-1 text-base font-semibold text-[#20263F] sm:text-lg">
+              <div className="size-guide-pill inline-flex rounded-full px-3 py-1 text-base font-semibold text-[#20263F] sm:text-lg">
                 {category.size}
               </div>
               <p className="mt-2 text-xs font-medium uppercase tracking-wide text-[#20263F]/55">
@@ -82,7 +127,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-[#20263F]/15 bg-white p-6 text-center md:p-10">
+      <section id="contact" className="rounded-2xl border border-[#20263F]/15 bg-white p-6 text-center md:p-10">
         <p className="text-xs font-semibold uppercase tracking-widest text-[#20263F]/45">
           Call or text for questions
         </p>

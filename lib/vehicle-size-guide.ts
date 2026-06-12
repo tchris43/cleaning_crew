@@ -1,7 +1,7 @@
 export const VEHICLE_SIZE_GUIDE = [
   {
     size: "Small",
-    badgeClass: "bg-[#E5C66E]",
+    cardClass: "size-guide-card size-guide-card--small",
     description: "sedans, 2-rows, small trucks",
     vehicles: [
       "Accord",
@@ -38,7 +38,7 @@ export const VEHICLE_SIZE_GUIDE = [
   },
   {
     size: "Mid-Sized",
-    badgeClass: "bg-[#DDE8D7]",
+    cardClass: "size-guide-card size-guide-card--mid",
     description: "small 3rd rows, larger trucks",
     vehicles: [
       "Acadia",
@@ -72,7 +72,7 @@ export const VEHICLE_SIZE_GUIDE = [
   },
   {
     size: "Large",
-    badgeClass: "bg-[#DCD9EA]",
+    cardClass: "size-guide-card size-guide-card--large",
     description: "full-sized SUVs, minivans",
     vehicles: [
       "Armada",
