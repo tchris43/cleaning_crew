@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 108" fill="none" role="img" aria-label="Clean Crew" shape-rendering="geometricPrecision">
+  <style>
+    .logo-word {
+      fill: #20263F;
+      font-family: Inter, 'Arial Black', 'Helvetica Neue', Arial, sans-serif;
+      font-size: 40px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+  </style>
+  <g stroke="#20263F" stroke-opacity="0.2" stroke-width="1.6" fill="none">
+    <circle cx="160" cy="80" r="22"/>
+    <circle cx="178" cy="66" r="16"/>
+    <circle cx="170" cy="44" r="12"/>
+    <circle cx="186" cy="50" r="9"/>
+    <circle cx="145" cy="60" r="14"/>
+    <circle cx="132" cy="76" r="10"/>
+    <circle cx="140" cy="40" r="8"/>
+    <circle cx="122" cy="50" r="6"/>
+    <circle cx="160" cy="30" r="11"/>
+    <circle cx="176" cy="24" r="7"/>
+    <circle cx="150" cy="16" r="5"/>
+    <circle cx="114" cy="34" r="5"/>
+    <circle cx="106" cy="64" r="4"/>
+    <circle cx="184" cy="84" r="6"/>
+    <circle cx="128" cy="88" r="7"/>
+    <circle cx="192" cy="72" r="4"/>
+    <circle cx="118" cy="18" r="4"/>
+  </g>
+  <text x="4" y="46" class="logo-word">Clean</text>
+  <text x="4" y="92" class="logo-word">Crew</text>
+</svg>
