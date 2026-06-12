@@ -5,6 +5,8 @@ export type TimeBlock = "MORNING" | "AFTERNOON" | "EVENING";
 export type AppointmentStatus = "booked" | "completed" | "cancelled";
 
 export interface AppointmentRequest {
+  firstName: string;
+  lastName: string;
   phone: string;
   email: string;
   serviceTier: ServiceTier;
@@ -16,6 +18,8 @@ export interface AppointmentRequest {
 }
 
 export interface NormalizedAppointmentRequest {
+  firstName: string;
+  lastName: string;
   phone: string;
   email: string;
   serviceTier: ServiceTier;

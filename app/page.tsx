@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ServiceCard from "../components/service-card";
+import { SUPPORT_PHONE, SUPPORT_PHONE_TEL } from "../lib/contact";
 import { VEHICLE_SIZE_GUIDE } from "../lib/vehicle-size-guide";
 
 const HOW_IT_WORKS = [
@@ -132,7 +133,9 @@ export default function HomePage() {
           Call or text for questions
         </p>
         <p className="mt-3 text-3xl font-semibold tracking-tight text-[#20263F] sm:text-4xl">
-          385-685-8941
+          <a href={`tel:${SUPPORT_PHONE_TEL}`} className="hover:underline underline-offset-4">
+            {SUPPORT_PHONE}
+          </a>
         </p>
 
         <div className="mt-8 border-t border-[#20263F]/8 pt-8">

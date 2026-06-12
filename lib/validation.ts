@@ -11,6 +11,13 @@ const optionalString = () =>
     return trimmed.length > 0 ? trimmed : undefined;
   }, z.string().optional());
 
+const nameSchema = (label: string) =>
+  z
+    .string()
+    .trim()
+    .min(1, `Please enter your ${label}.`)
+    .max(50, `${label.charAt(0).toUpperCase() + label.slice(1)} is too long.`);
+
 const phoneSchema = z
   .string()
   .regex(/^\+?[0-9().\-\s]{7,20}$/, "Please enter a valid phone number.");
@@ -18,6 +25,8 @@ const phoneSchema = z
 const emailSchema = z.string().email("Please enter a valid email address.");
 
 export const appointmentRequestSchema = z.object({
+  firstName: nameSchema("first name"),
+  lastName: nameSchema("last name"),
   phone: phoneSchema,
   email: emailSchema,
   serviceTier: z.enum(["BASIC_REFRESH", "DEEP_CLEAN", "PREMIUM_RESTORE"]),

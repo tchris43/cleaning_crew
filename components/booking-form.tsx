@@ -6,6 +6,7 @@ import WeekPicker from "./week-picker";
 import { VEHICLE_SIZE_GUIDE } from "../lib/vehicle-size-guide";
 import { BOOKING_CONFIRMATION_KEY } from "../lib/booking-confirmation";
 import { SERVICE_TIERS, ADDONS, TierId, VehicleSize } from "../lib/services";
+import { SUPPORT_PHONE, SUPPORT_PHONE_TEL } from "../lib/contact";
 import { formatLocalDate, formatTimeLabel } from "../lib/slots";
 
 function getBookingErrorMessages(json: unknown, status: number): string[] {
@@ -45,6 +46,8 @@ export default function BookingForm() {
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
   const [appointmentDate, setAppointmentDate] = useState<Date | null>(null);
   const [appointmentTime, setAppointmentTime] = useState<string | null>(null);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [notes, setNotes] = useState("");
@@ -91,6 +94,8 @@ export default function BookingForm() {
     setLoading(true);
 
     const payload = {
+      firstName,
+      lastName,
       phone,
       email,
       serviceTier: tier,
@@ -116,6 +121,8 @@ export default function BookingForm() {
         sessionStorage.setItem(
           BOOKING_CONFIRMATION_KEY,
           JSON.stringify({
+            firstName: payload.firstName,
+            lastName: payload.lastName,
             date: payload.appointmentDate,
             time: formatTimeLabel(appointmentTime),
             tier: SERVICE_TIERS[tier].title,
@@ -192,6 +199,38 @@ export default function BookingForm() {
 
           <section className="form-section space-y-4">
             <h2 className="form-step-title">2. Contact info</h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="form-label" htmlFor="firstName">
+                  First name
+                </label>
+                <input
+                  id="firstName"
+                  type="text"
+                  required
+                  autoComplete="given-name"
+                  className="field-input mt-0 font-medium"
+                  placeholder="First"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="form-label" htmlFor="lastName">
+                  Last name
+                </label>
+                <input
+                  id="lastName"
+                  type="text"
+                  required
+                  autoComplete="family-name"
+                  className="field-input mt-0 font-medium"
+                  placeholder="Last"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+              </div>
+            </div>
             <div>
               <label className="form-label" htmlFor="phone">
                 Phone number
@@ -305,6 +344,15 @@ export default function BookingForm() {
             >
               {loading ? "Sending…" : "Complete booking"}
             </button>
+            <p className="mt-2 text-center text-xs text-[#20263F]/55 md:text-right">
+              Having trouble? Call or text{" "}
+              <a
+                href={`tel:${SUPPORT_PHONE_TEL}`}
+                className="font-semibold text-[#20263F]/80 underline-offset-2 hover:underline"
+              >
+                {SUPPORT_PHONE}
+              </a>
+            </p>
           </div>
         </div>
       </form>

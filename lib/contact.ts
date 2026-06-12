@@ -1,0 +1,2 @@
+export const SUPPORT_PHONE = "385-685-8941";
+export const SUPPORT_PHONE_TEL = "3856858941";

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { BOOKING_CONFIRMATION_KEY, type BookingConfirmation } from "../../../lib/booking-confirmation";
+import { SUPPORT_PHONE, SUPPORT_PHONE_TEL } from "../../../lib/contact";
 
 function formatBookingDate(date: string): string {
   try {
@@ -36,17 +37,17 @@ export default function BookingSuccessPage() {
 
   if (!confirmation) {
     return (
-      <div className="py-16 text-center text-sm font-medium text-[#20263F]/45">
+      <div className="flex min-h-[calc(100dvh-13rem)] items-center justify-center text-sm font-medium text-[#20263F]/45 md:min-h-[calc(100dvh-14rem)]">
         Loading confirmation…
       </div>
     );
   }
 
   return (
-    <main className="mx-auto w-full max-w-lg pb-4 md:pb-6">
-      <div className="rounded-2xl border border-[#20263F]/10 bg-[#FAFBFC] px-6 py-10 text-center md:px-10 md:py-12">
-        <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[#E8F5E9] text-[#2E7D32]">
-          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <main className="mx-auto flex w-full max-w-lg min-h-[calc(100dvh-13rem)] flex-col justify-center py-4 md:min-h-[calc(100dvh-14rem)] md:py-6">
+      <div className="w-full rounded-2xl border border-[#20263F]/10 bg-[#FAFBFC] px-6 py-8 text-center md:px-10 md:py-10">
+        <div className="success-checkmark mx-auto mb-4" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
           </svg>
         </div>
@@ -62,8 +63,24 @@ export default function BookingSuccessPage() {
           ) : null}
           .
         </p>
+        <p className="mt-4 text-sm text-[#20263F]/65">
+          Didn&apos;t get the email or have questions? Call or text{" "}
+          <a
+            href={`tel:${SUPPORT_PHONE_TEL}`}
+            className="font-semibold text-[#20263F] underline-offset-2 hover:underline"
+          >
+            {SUPPORT_PHONE}
+          </a>
+          .
+        </p>
 
-        <div className="mt-8 space-y-3 rounded-xl border border-[#20263F]/8 bg-white p-5 text-left text-sm">
+        <div className="mt-6 space-y-3 rounded-xl border border-[#20263F]/8 bg-white p-5 text-left text-sm">
+          <div className="flex justify-between gap-4 border-b border-[#20263F]/8 pb-3">
+            <span className="text-[#20263F]/55">Name</span>
+            <span className="text-right font-medium text-[#20263F]">
+              {confirmation.firstName} {confirmation.lastName}
+            </span>
+          </div>
           <div className="flex justify-between gap-4 border-b border-[#20263F]/8 pb-3">
             <span className="text-[#20263F]/55">Date & time</span>
             <span className="text-right font-medium text-[#20263F]">
@@ -82,7 +99,7 @@ export default function BookingSuccessPage() {
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link href="/" className="btn-primary px-6 py-3 text-base">
             Back to home
           </Link>

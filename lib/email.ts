@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { SUPPORT_PHONE } from "./contact";
 import { ADDONS, SERVICE_TIERS, type TierId } from "./services";
 import { formatTimeLabel } from "./slots";
 import type { AppointmentRequest, CreateAppointmentRpcInput } from "../types/appointment";
@@ -15,6 +16,7 @@ function formatOwnerBookingDetails(input: CreateAppointmentRpcInput & { appointm
 
   return [
     `Appointment ID: ${input.appointmentId}`,
+    `Name: ${input.firstName} ${input.lastName}`,
     `Phone: ${input.phone ?? ""}`,
     `Email: ${input.email ?? ""}`,
     `Package: ${tierTitle}`,
@@ -34,6 +36,7 @@ function formatCustomerOrderConfirmation(input: AppointmentRequest) {
   const lines = [
     "Thank you for booking with Clean Crew Detailing!",
     "",
+    `Name: ${input.firstName} ${input.lastName}`,
     `Phone: ${input.phone}`,
     `Email: ${input.email}`,
     `Package: ${tierTitle}`,
@@ -47,7 +50,7 @@ function formatCustomerOrderConfirmation(input: AppointmentRequest) {
     lines.push(`Notes: ${input.notes}`);
   }
 
-  lines.push("", "Contact 385-685-8941 for any questions.");
+  lines.push("", `Contact ${SUPPORT_PHONE} for any questions.`);
 
   return lines.join("\n");
 }

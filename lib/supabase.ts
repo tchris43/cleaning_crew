@@ -20,7 +20,7 @@ export function createSupabaseAppointmentRpcClient(supabaseUrl: string, supabase
   return {
     async createAppointment(input) {
       const { data, error } = await supabase.rpc("create_appointment", {
-        p_name: input.phone || input.email || "Online Booking",
+        p_name: `${input.firstName} ${input.lastName}`.trim(),
         p_phone: input.phone ?? null,
         p_email: input.email ?? null,
         p_service_tier: input.serviceTier,
