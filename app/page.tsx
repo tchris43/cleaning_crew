@@ -88,21 +88,6 @@ export default function HomePage() {
         </p>
       </section>
 
-      <section className="rounded-2xl border border-[#20263F]/10 bg-white p-5 md:p-7">
-        <h2 className="section-title">How it works</h2>
-        <div className="mt-6 grid gap-4 md:grid-cols-3">
-          {HOW_IT_WORKS.map((item) => (
-            <article key={item.step} className="rounded-xl border border-[#20263F]/8 bg-[#FAFBFC] p-4">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#20263F] text-sm font-semibold text-white">
-                {item.step}
-              </span>
-              <h3 className="mt-3 text-base font-semibold text-[#20263F]">{item.title}</h3>
-              <p className="mt-1 text-sm leading-relaxed text-[#20263F]/70">{item.detail}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
       <details id="size-guide" className="size-guide-disclosure scroll-mt-6 rounded-2xl border border-[#20263F]/10 bg-[#FAFBFC] p-5 md:p-7">
         <summary className="section-title size-guide-disclosure-summary">
           Vehicle Size Guide
@@ -128,6 +113,21 @@ export default function HomePage() {
           ))}
         </div>
       </details>
+
+      <section className="rounded-2xl border border-[#20263F]/10 bg-white p-5 md:p-7">
+        <h2 className="section-title">How it works</h2>
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          {HOW_IT_WORKS.map((item) => (
+            <article key={item.step} className="rounded-xl border border-[#20263F]/8 bg-[#FAFBFC] p-4">
+              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#20263F] text-sm font-semibold text-white">
+                {item.step}
+              </span>
+              <h3 className="mt-3 text-base font-semibold text-[#20263F]">{item.title}</h3>
+              <p className="mt-1 text-sm leading-relaxed text-[#20263F]/70">{item.detail}</p>
+            </article>
+          ))}
+        </div>
+      </section>
 
       <section id="contact" className="rounded-2xl border border-[#20263F]/15 bg-white p-6 text-center md:p-10">
         <p className="text-xs font-semibold uppercase tracking-widest text-[#20263F]/45">
