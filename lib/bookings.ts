@@ -1,5 +1,5 @@
 import type { AppointmentApiResponse, CreateAppointmentRpcInput } from "../types/appointment";
-import { BOOKING_CAPACITY, getTimeBlockForAppointmentTime, isWithinBookingWindow } from "./slots";
+import { BOOKING_CAPACITY, getTimeBlockForAppointmentTime, isBookableTimeSlot, isWithinBookingWindow } from "./slots";
 import { parseAppointmentRequest } from "./validation";
 import type { AppointmentRpcClient } from "./supabase";
 import type { BookingEmailSender } from "./email";
@@ -55,6 +55,15 @@ export async function processAppointmentSubmission(input: unknown, deps: Booking
       {
         path: "appointmentDate",
         message: "Please select a booking date within the allowed window."
+      }
+    ]);
+  }
+
+  if (!isBookableTimeSlot(parsed.data.appointmentDate, parsed.data.appointmentTime, now)) {
+    return validationError([
+      {
+        path: "appointmentTime",
+        message: "Please select a future appointment time."
       }
     ]);
   }

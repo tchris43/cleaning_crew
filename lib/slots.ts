@@ -64,10 +64,8 @@ function addDays(date: Date, days: number): Date {
   return nextDate;
 }
 
-export function getNextAvailableMonday(referenceDate = new Date()): string {
-  const currentDay = referenceDate.getUTCDay();
-  const daysUntilMonday = currentDay === 1 ? 7 : (8 - currentDay) % 7 || 7;
-  return toIsoDate(addDays(referenceDate, daysUntilMonday));
+export function getEarliestBookingDate(referenceDate = new Date()): string {
+  return formatLocalDate(referenceDate);
 }
 
 export function getLatestBookingDate(referenceDate = new Date()): string {
@@ -76,7 +74,7 @@ export function getLatestBookingDate(referenceDate = new Date()): string {
 
 export function getBookingWindow(referenceDate = new Date()) {
   return {
-    earliestBookingDate: getNextAvailableMonday(referenceDate),
+    earliestBookingDate: getEarliestBookingDate(referenceDate),
     latestBookingDate: getLatestBookingDate(referenceDate)
   };
 }
@@ -100,6 +98,34 @@ export function isBookableDay(day: Date, referenceDate = new Date()): boolean {
   }
 
   return isWithinBookingWindow(formatLocalDate(day), referenceDate);
+}
+
+export function isBookableTimeSlot(
+  appointmentDate: string,
+  appointmentTime: string,
+  referenceDate = new Date()
+): boolean {
+  const day = parseLocalDateString(appointmentDate);
+  if (!isBookableDay(day, referenceDate)) {
+    return false;
+  }
+
+  if (formatLocalDate(day) !== formatLocalDate(referenceDate)) {
+    return true;
+  }
+
+  const [hours, minutes] = appointmentTime.split(":").map(Number);
+  const slotStart = new Date(
+    referenceDate.getFullYear(),
+    referenceDate.getMonth(),
+    referenceDate.getDate(),
+    hours,
+    minutes,
+    0,
+    0
+  );
+
+  return slotStart > referenceDate;
 }
 
 export function parseLocalDateString(date: string): Date {

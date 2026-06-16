@@ -81,8 +81,8 @@ describe("booking validation", () => {
     expect(getTimeBlockForAppointmentTime("13:30")).toBe("AFTERNOON");
     expect(getTimeBlockForAppointmentTime("19:00")).toBe("EVENING");
 
-    const window = getBookingWindow(new Date("2026-06-08T12:00:00Z"));
-    expect(window.earliestBookingDate).toBe("2026-06-15");
+    const window = getBookingWindow(new Date("2026-06-08T12:00:00"));
+    expect(window.earliestBookingDate).toBe("2026-06-08");
     expect(window.latestBookingDate).toBe("2026-08-07");
   });
 });

@@ -132,6 +132,7 @@ export default function BookingForm() {
             tier: SERVICE_TIERS[tier].title,
             vehicle: `${vehicleMake} ${vehicleModel}`.trim(),
             vehicleSize,
+            estimatedTotal: `$${SERVICE_TIERS[tier].prices[vehicleSize]}`,
             email: payload.email
           })
         );

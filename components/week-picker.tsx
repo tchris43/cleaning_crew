@@ -16,6 +16,8 @@ import {
   getBookingWindow,
   getTimeBlocksForDay,
   isBookableDay,
+  isBookableTimeSlot,
+  formatLocalDate,
   parseLocalDateString,
   TIME_BLOCK_LABELS,
   TIME_SLOTS
@@ -32,6 +34,7 @@ export default function WeekPicker({
   onChange: (date: Date, time: string | null) => void;
 }) {
   const today = startOfDay(new Date());
+  const now = new Date();
 
   const [currentWeekStart, setCurrentWeekStart] = useState(() => {
     const now = startOfDay(new Date());
@@ -175,7 +178,9 @@ export default function WeekPicker({
                 {TIME_BLOCK_LABELS[block]}
               </p>
               <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
-                {TIME_SLOTS[block].map((slot) => {
+                {TIME_SLOTS[block]
+                  .filter((slot) => isBookableTimeSlot(formatLocalDate(activeDay), slot, now))
+                  .map((slot) => {
                   const isSelected =
                     selectedDate &&
                     selectedTime === slot &&
