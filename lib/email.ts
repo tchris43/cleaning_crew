@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 
 import { formatBookingDateLong, formatVehicleSizeLabel, getEstimatedTotal } from "./booking-display";
-import { BOOKING_FROM_ADDRESS, SUPPORT_PHONE, SUPPORT_PHONE_TEL } from "./contact";
+import { BOOKING_FROM_ADDRESS, SERVICE_ADDRESS, SERVICE_ADDRESS_MAPS_URL, SUPPORT_PHONE, SUPPORT_PHONE_TEL } from "./contact";
 import { ADDONS, SERVICE_TIERS, type TierId, type VehicleSize } from "./services";
 import { formatTimeLabel } from "./slots";
 import type { AppointmentRequest, CreateAppointmentRpcInput } from "../types/appointment";
@@ -84,7 +84,13 @@ function formatCustomerOrderConfirmationText(input: AppointmentRequest) {
     lines.push(`Notes: ${input.notes}`);
   }
 
-  lines.push("", `Questions? Call or text ${SUPPORT_PHONE}.`);
+  lines.push(
+    "",
+    "DROP-OFF LOCATION",
+    `Please bring your car to ${SERVICE_ADDRESS} at your scheduled appointment time.`,
+    "",
+    `Questions? Call or text ${SUPPORT_PHONE}.`
+  );
 
   return lines.join("\n");
 }
@@ -201,6 +207,18 @@ function formatCustomerOrderConfirmationHtml(input: AppointmentRequest) {
                                 </td>
                               </tr>
                             </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding-top:16px;">
+                      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border:1px solid rgba(32,38,63,0.1);border-radius:12px;background-color:#f7fafc;">
+                        <tr>
+                          <td style="padding:16px 18px;">
+                            <div style="font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(32,38,63,0.48);">Drop-off location</div>
+                            <p style="margin:8px 0 0;font-size:15px;line-height:1.65;color:#20263f;">Please bring your car to <a href="${SERVICE_ADDRESS_MAPS_URL}" style="font-weight:600;color:#20263f;text-decoration:underline;">${SERVICE_ADDRESS}</a> at your scheduled appointment time.</p>
                           </td>
                         </tr>
                       </table>

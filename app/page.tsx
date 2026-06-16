@@ -1,6 +1,6 @@
 import Link from "next/link";
 import ServiceCard from "../components/service-card";
-import { SUPPORT_EMAIL, SUPPORT_PHONE, SUPPORT_PHONE_TEL } from "../lib/contact";
+import { SERVICE_ADDRESS, SUPPORT_EMAIL, SUPPORT_PHONE, SUPPORT_PHONE_TEL, SERVICE_ADDRESS_MAPS_URL } from "../lib/contact";
 import { VEHICLE_SIZE_GUIDE } from "../lib/vehicle-size-guide";
 
 const HOW_IT_WORKS = [
@@ -16,11 +16,10 @@ const HOW_IT_WORKS = [
   },
   {
     step: "3",
-    title: "We confirm details",
-    detail: "Submit your request — we'll reach out if anything else is needed."
+    title: "Drop off here",
+    detail: `Bring your car to ${SERVICE_ADDRESS} at your appointment time.`
   }
 ];
-
 export default function HomePage() {
   return (
     <main className="space-y-10 md:space-y-12">
@@ -141,6 +140,16 @@ export default function HomePage() {
         <p className="mt-3 text-base font-medium text-[#20263F]/80 md:text-lg">
           <a href={`mailto:${SUPPORT_EMAIL}`} className="hover:underline underline-offset-4">
             {SUPPORT_EMAIL}
+          </a>
+        </p>
+        <p className="mt-3 text-base font-medium leading-relaxed text-[#20263F]/80 md:text-lg">
+          <a
+            href={SERVICE_ADDRESS_MAPS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline underline-offset-4"
+          >
+            {SERVICE_ADDRESS}
           </a>
         </p>
 

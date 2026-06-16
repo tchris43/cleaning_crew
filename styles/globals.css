@@ -1195,6 +1195,37 @@ a:where(.header-cta, .btn-primary, .btn-secondary) {
   color: var(--color-primary);
 }
 
+.confirmation-dropoff {
+  margin-top: 1.25rem;
+  padding: 1rem 1.125rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(32, 38, 63, 0.1);
+  background-color: #f7fafc;
+}
+
+.confirmation-dropoff-label {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(32, 38, 63, 0.48);
+}
+
+.confirmation-dropoff-text {
+  margin: 0.5rem 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--color-primary);
+}
+
+.confirmation-dropoff-link {
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .confirmation-footer {
   padding: 0 1.5rem 1.75rem;
   border-top: 1px solid rgba(32, 38, 63, 0.08);

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 
 import { formatBookingDateLong, formatVehicleSizeLabel } from "../../../lib/booking-display";
 import { BOOKING_CONFIRMATION_KEY, type BookingConfirmation } from "../../../lib/booking-confirmation";
-import { SUPPORT_PHONE, SUPPORT_PHONE_TEL } from "../../../lib/contact";
+import { SERVICE_ADDRESS, SERVICE_ADDRESS_MAPS_URL, SUPPORT_PHONE, SUPPORT_PHONE_TEL } from "../../../lib/contact";
 
 export default function BookingSuccessPage() {
   const router = useRouter();
@@ -102,6 +102,22 @@ export default function BookingSuccessPage() {
               <span className="confirmation-total-value">{confirmation.estimatedTotal}</span>
             </div>
           ) : null}
+
+          <div className="confirmation-dropoff">
+            <p className="confirmation-dropoff-label">Drop-off location</p>
+            <p className="confirmation-dropoff-text">
+              Please bring your car to{" "}
+              <a
+                href={SERVICE_ADDRESS_MAPS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="confirmation-dropoff-link"
+              >
+                {SERVICE_ADDRESS}
+              </a>{" "}
+              at your scheduled appointment time.
+            </p>
+          </div>
         </section>
 
         <footer className="confirmation-footer">
