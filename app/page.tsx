@@ -25,15 +25,17 @@ export default function HomePage() {
   return (
     <main className="space-y-10 md:space-y-12">
       <section className="home-hero">
-        <p className="home-hero-brand">Clean Crew Detail</p>
-        <p className="home-hero-eyebrow">Interior detailing · Utah County</p>
-        <h1 className="home-hero-headline">Professional car care, booked in minutes</h1>
-        <p className="home-hero-copy">
-          See pricing, pick your package, and request an appointment — no accounts, no hassle.
-        </p>
-        <Link href="/book" className="btn-primary mt-6 inline-flex px-6 py-3 text-base">
-          Book appointment
-        </Link>
+        <div className="home-hero-content">
+          <p className="home-hero-brand">Clean Crew Detail</p>
+          <p className="home-hero-eyebrow">Interior detailing · Utah County</p>
+          <h1 className="home-hero-headline">Professional car care, booked in minutes</h1>
+          <p className="home-hero-copy">
+            See pricing, pick your package, and request an appointment — no accounts, no hassle.
+          </p>
+          <Link href="/book" className="btn-primary mt-6 inline-flex px-6 py-3 text-base">
+            Book appointment
+          </Link>
+        </div>
       </section>
 
       <section id="services">
@@ -101,8 +103,10 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="size-guide" className="rounded-2xl border border-[#20263F]/10 bg-[#FAFBFC] p-5 md:p-7">
-        <h2 className="section-title">Vehicle Size Guide</h2>
+      <details id="size-guide" className="size-guide-disclosure scroll-mt-6 rounded-2xl border border-[#20263F]/10 bg-[#FAFBFC] p-5 md:p-7">
+        <summary className="section-title size-guide-disclosure-summary">
+          Vehicle Size Guide
+        </summary>
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-5">
           {VEHICLE_SIZE_GUIDE.map((category) => (
             <article
@@ -123,7 +127,7 @@ export default function HomePage() {
             </article>
           ))}
         </div>
-      </section>
+      </details>
 
       <section id="contact" className="rounded-2xl border border-[#20263F]/15 bg-white p-6 text-center md:p-10">
         <p className="text-xs font-semibold uppercase tracking-widest text-[#20263F]/45">
