@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { SUPPORT_PHONE } from "./contact";
+import { BOOKING_FROM_ADDRESS, SUPPORT_PHONE } from "./contact";
 import { ADDONS, SERVICE_TIERS, type TierId } from "./services";
 import { formatTimeLabel } from "./slots";
 import type { AppointmentRequest, CreateAppointmentRpcInput } from "../types/appointment";
@@ -20,6 +20,7 @@ function formatOwnerBookingDetails(input: CreateAppointmentRpcInput & { appointm
     `Phone: ${input.phone ?? ""}`,
     `Email: ${input.email ?? ""}`,
     `Package: ${tierTitle}`,
+    `Vehicle: ${input.vehicleMake} ${input.vehicleModel}`,
     `Vehicle Size: ${input.vehicleSize}`,
     `Date: ${input.appointmentDate}`,
     `Time: ${formatTimeLabel(input.appointmentTime)}`,
@@ -34,12 +35,13 @@ function formatCustomerOrderConfirmation(input: AppointmentRequest) {
     input.addons?.map((id) => ADDONS.find((addon) => addon.id === id)?.label ?? id) ?? [];
 
   const lines = [
-    "Thank you for booking with Clean Crew Detailing!",
+    "Thank you for booking with Clean Crew Detail!",
     "",
     `Name: ${input.firstName} ${input.lastName}`,
     `Phone: ${input.phone}`,
     `Email: ${input.email}`,
     `Package: ${tierTitle}`,
+    `Vehicle: ${input.vehicleMake} ${input.vehicleModel}`,
     `Vehicle Size: ${input.vehicleSize}`,
     `Date: ${input.appointmentDate}`,
     `Time: ${formatTimeLabel(input.appointmentTime)}`,
@@ -61,7 +63,7 @@ export function createResendBookingEmailSender(resendApiKey: string, ownerNotifi
   return {
     async sendOwnerNotification(input) {
       await resend.emails.send({
-        from: "Clean Crew Detailing <onboarding@resend.dev>",
+        from: BOOKING_FROM_ADDRESS,
         to: ownerNotificationEmail,
         subject: "New appointment booked",
         text: formatOwnerBookingDetails(input)
@@ -73,7 +75,7 @@ export function createResendBookingEmailSender(resendApiKey: string, ownerNotifi
       }
 
       await resend.emails.send({
-        from: "Clean Crew Detailing <onboarding@resend.dev>",
+        from: BOOKING_FROM_ADDRESS,
         to: input.email,
         subject: "Order Confirmation",
         text: formatCustomerOrderConfirmation(input)

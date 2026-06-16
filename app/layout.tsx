@@ -4,7 +4,7 @@ import Header from "../components/header";
 import IconAttribution from "../components/icon-attribution";
 
 export const metadata = {
-  title: "Clean Crew Detailing",
+  title: "Clean Crew Detail",
   description: "Appointment booking scaffold"
 };
 

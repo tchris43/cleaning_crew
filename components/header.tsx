@@ -22,7 +22,7 @@ export default function Header() {
       </div>
 
       <div className="site-header-row">
-        <Link href="/" className="site-logo" aria-label="Clean Crew Detailing home">
+        <Link href="/" className="site-logo" aria-label="Clean Crew Detail home">
           <Logo variant="white" className="h-[52px] w-auto md:h-[64px]" />
         </Link>
 

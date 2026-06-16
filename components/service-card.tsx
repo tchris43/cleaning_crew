@@ -24,25 +24,25 @@ export default function ServiceCard({
   const tierConfig = {
     BASIC_REFRESH: {
       card: "tier-card--basic",
-      border: "border-[#A5D7E8]/70",
-      badge: "bg-[#A5D7E8]",
-      icon: "text-[#5BA4B8]",
+      border: "tier-border--basic",
+      badge: "tier-badge--basic",
+      icon: "tier-icon--basic",
       tagline: "tier-tagline--basic",
       featuredRing: ""
     },
     DEEP_CLEAN: {
       card: "tier-card--deep",
-      border: "border-[#6DB5A8]/70",
-      badge: "bg-[#6DB5A8]",
-      icon: "text-[#4A9B8E]",
+      border: "tier-border--deep",
+      badge: "tier-badge--deep",
+      icon: "tier-icon--deep",
       tagline: "tier-tagline--deep",
-      featuredRing: "ring-1 ring-[#6DB5A8]/35"
+      featuredRing: "tier-ring--deep"
     },
     PREMIUM_RESTORE: {
       card: "tier-card--premium",
-      border: "border-[#D9A62E]/65",
-      badge: "bg-[#E5C66E]",
-      icon: "text-[#B8891A]",
+      border: "tier-border--premium",
+      badge: "tier-badge--premium",
+      icon: "tier-icon--premium",
       tagline: "tier-tagline--premium",
       featuredRing: ""
     }
@@ -61,7 +61,7 @@ export default function ServiceCard({
 
       {badge && (
         <div
-          className={`absolute -top-3 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-[#20263F] shadow-sm sm:px-4 sm:text-xs ${tierConfig.badge}`}
+          className={`absolute -top-3 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-wide shadow-sm sm:px-4 sm:text-xs ${tierConfig.badge}`}
         >
           {badge}
         </div>

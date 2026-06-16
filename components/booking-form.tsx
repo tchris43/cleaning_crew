@@ -42,6 +42,8 @@ export default function BookingForm() {
   const searchParams = useSearchParams();
 
   const [tier, setTier] = useState<TierId>("BASIC_REFRESH");
+  const [vehicleMake, setVehicleMake] = useState("");
+  const [vehicleModel, setVehicleModel] = useState("");
   const [vehicleSize, setVehicleSize] = useState<VehicleSize>("SMALL");
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
   const [appointmentDate, setAppointmentDate] = useState<Date | null>(null);
@@ -99,6 +101,8 @@ export default function BookingForm() {
       phone,
       email,
       serviceTier: tier,
+      vehicleMake,
+      vehicleModel,
       vehicleSize,
       appointmentDate: formatLocalDate(appointmentDate),
       appointmentTime,
@@ -126,7 +130,8 @@ export default function BookingForm() {
             date: payload.appointmentDate,
             time: formatTimeLabel(appointmentTime),
             tier: SERVICE_TIERS[tier].title,
-            vehicle: vehicleSize,
+            vehicle: `${vehicleMake} ${vehicleModel}`.trim(),
+            vehicleSize,
             email: payload.email
           })
         );
@@ -170,6 +175,36 @@ export default function BookingForm() {
                   </option>
                 ))}
               </select>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="form-label" htmlFor="vehicleMake">
+                  Vehicle make
+                </label>
+                <input
+                  id="vehicleMake"
+                  type="text"
+                  required
+                  className="field-input mt-0 font-medium"
+                  placeholder="Toyota"
+                  value={vehicleMake}
+                  onChange={(e) => setVehicleMake(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="form-label" htmlFor="vehicleModel">
+                  Vehicle model
+                </label>
+                <input
+                  id="vehicleModel"
+                  type="text"
+                  required
+                  className="field-input mt-0 font-medium"
+                  placeholder="Camry"
+                  value={vehicleModel}
+                  onChange={(e) => setVehicleModel(e.target.value)}
+                />
+              </div>
             </div>
             <div>
               <div className="mb-1 flex items-baseline justify-between gap-2">

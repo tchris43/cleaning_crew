@@ -30,6 +30,8 @@ export const appointmentRequestSchema = z.object({
   phone: phoneSchema,
   email: emailSchema,
   serviceTier: z.enum(["BASIC_REFRESH", "DEEP_CLEAN", "PREMIUM_RESTORE"]),
+  vehicleMake: nameSchema("vehicle make"),
+  vehicleModel: nameSchema("vehicle model"),
   vehicleSize: z.enum(["SMALL", "MID-SIZED", "LARGE"]),
   appointmentDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Please enter a valid appointment date."),
   appointmentTime: z.string().regex(/^\d{2}:\d{2}$/, "Please enter a valid appointment time."),

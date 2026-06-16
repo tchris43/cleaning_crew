@@ -10,6 +10,8 @@ export interface AppointmentRequest {
   phone: string;
   email: string;
   serviceTier: ServiceTier;
+  vehicleMake: string;
+  vehicleModel: string;
   vehicleSize: string;
   appointmentDate: string;
   appointmentTime: string;
@@ -23,6 +25,8 @@ export interface NormalizedAppointmentRequest {
   phone: string;
   email: string;
   serviceTier: ServiceTier;
+  vehicleMake: string;
+  vehicleModel: string;
   vehicleSize: string;
   appointmentDate: string;
   appointmentTime: string;

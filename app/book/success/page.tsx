@@ -93,9 +93,13 @@ export default function BookingSuccessPage() {
             <span className="text-[#20263F]/55">Package</span>
             <span className="font-medium text-[#20263F]">{confirmation.tier}</span>
           </div>
+          <div className="flex justify-between gap-4 border-b border-[#20263F]/8 pb-3">
+            <span className="text-[#20263F]/55">Vehicle</span>
+            <span className="text-right font-medium text-[#20263F]">{confirmation.vehicle}</span>
+          </div>
           <div className="flex justify-between gap-4">
             <span className="text-[#20263F]/55">Vehicle size</span>
-            <span className="font-medium text-[#20263F]">{confirmation.vehicle}</span>
+            <span className="font-medium text-[#20263F]">{confirmation.vehicleSize}</span>
           </div>
         </div>
 

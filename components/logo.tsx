@@ -14,7 +14,7 @@ export default function Logo({ className = "h-[68px] w-auto md:h-[78px]", varian
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 350 140"
       role="img"
-      aria-label="Clean Crew Detailing"
+      aria-label="Clean Crew Detail"
       className={className}
       shapeRendering="geometricPrecision"
     >
@@ -55,7 +55,7 @@ export default function Logo({ className = "h-[68px] w-auto md:h-[78px]", varian
         Crew
       </text>
       <text x="6" y="136" className="logo-sub">
-        Detailing
+        Detail
       </text>
     </svg>
   );

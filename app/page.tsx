@@ -1,6 +1,6 @@
 import Link from "next/link";
 import ServiceCard from "../components/service-card";
-import { SUPPORT_PHONE, SUPPORT_PHONE_TEL } from "../lib/contact";
+import { SUPPORT_EMAIL, SUPPORT_PHONE, SUPPORT_PHONE_TEL } from "../lib/contact";
 import { VEHICLE_SIZE_GUIDE } from "../lib/vehicle-size-guide";
 
 const HOW_IT_WORKS = [
@@ -24,17 +24,14 @@ const HOW_IT_WORKS = [
 export default function HomePage() {
   return (
     <main className="space-y-10 md:space-y-12">
-      <section className="rounded-2xl border border-[#20263F]/10 bg-[#FAFBFC] px-5 py-6 text-center md:px-8 md:py-8">
-        <p className="text-xs font-semibold uppercase tracking-widest text-[#20263F]/45">
-          Interior detailing · Utah County
-        </p>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-[#20263F] md:text-3xl">
-          Professional car care, booked in minutes
-        </h1>
-        <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-[#20263F]/70 md:text-base">
+      <section className="home-hero">
+        <p className="home-hero-brand">Clean Crew Detail</p>
+        <p className="home-hero-eyebrow">Interior detailing · Utah County</p>
+        <h1 className="home-hero-headline">Professional car care, booked in minutes</h1>
+        <p className="home-hero-copy">
           See pricing, pick your package, and request an appointment — no accounts, no hassle.
         </p>
-        <Link href="/book" className="btn-primary mt-5 inline-flex px-6 py-3 text-base">
+        <Link href="/book" className="btn-primary mt-6 inline-flex px-6 py-3 text-base">
           Book appointment
         </Link>
       </section>
@@ -130,11 +127,16 @@ export default function HomePage() {
 
       <section id="contact" className="rounded-2xl border border-[#20263F]/15 bg-white p-6 text-center md:p-10">
         <p className="text-xs font-semibold uppercase tracking-widest text-[#20263F]/45">
-          Call or text for questions
+          Call, text, or email for questions
         </p>
         <p className="mt-3 text-3xl font-semibold tracking-tight text-[#20263F] sm:text-4xl">
           <a href={`tel:${SUPPORT_PHONE_TEL}`} className="hover:underline underline-offset-4">
             {SUPPORT_PHONE}
+          </a>
+        </p>
+        <p className="mt-3 text-base font-medium text-[#20263F]/80 md:text-lg">
+          <a href={`mailto:${SUPPORT_EMAIL}`} className="hover:underline underline-offset-4">
+            {SUPPORT_EMAIL}
           </a>
         </p>
 

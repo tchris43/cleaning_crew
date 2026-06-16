@@ -7,5 +7,6 @@ export type BookingConfirmation = {
   time: string;
   tier: string;
   vehicle: string;
+  vehicleSize: string;
   email: string;
 };
