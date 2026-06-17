@@ -18,7 +18,7 @@ export default function Header() {
   return (
     <header className="site-header-wrap">
       <div className="site-discount-banner">
-        First 20 customers receive a 10% discount
+        Gift Certificates Available at 10% Discount
       </div>
 
       <div className="site-header-row">
