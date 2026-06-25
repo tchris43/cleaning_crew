@@ -14,6 +14,10 @@ export function createSupabaseServerClient(supabaseUrl: string, supabaseServiceR
   });
 }
 
+function normalizeAppointmentTime(time: string): string {
+  return /^\d{2}:\d{2}$/.test(time) ? `${time}:00` : time;
+}
+
 export function createSupabaseAppointmentRpcClient(supabaseUrl: string, supabaseServiceRoleKey: string): AppointmentRpcClient {
   const supabase = createSupabaseServerClient(supabaseUrl, supabaseServiceRoleKey);
 
@@ -27,7 +31,7 @@ export function createSupabaseAppointmentRpcClient(supabaseUrl: string, supabase
         p_vehicle_make: input.vehicleMake,
         p_vehicle_model: input.vehicleModel,
         p_appointment_date: input.appointmentDate,
-        p_appointment_time: input.appointmentTime,
+        p_appointment_time: normalizeAppointmentTime(input.appointmentTime),
         p_time_block: input.timeBlock,
         p_block_capacity_snapshot: input.blockCapacitySnapshot,
         p_photo_permission: false,
@@ -35,6 +39,8 @@ export function createSupabaseAppointmentRpcClient(supabaseUrl: string, supabase
       });
 
       if (error) {
+        console.error("Supabase create_appointment RPC error:", error.message, error.details, error.hint);
+
         if (typeof error.message === "string" && error.message.toUpperCase().includes("BLOCK_FULL")) {
           return { success: false, code: "BLOCK_FULL" };
         }
@@ -43,6 +49,7 @@ export function createSupabaseAppointmentRpcClient(supabaseUrl: string, supabase
       }
 
       if (!data || typeof data !== "object") {
+        console.error("Supabase create_appointment returned invalid data:", data);
         return { success: false, code: "SERVER_ERROR" };
       }
 
@@ -56,6 +63,7 @@ export function createSupabaseAppointmentRpcClient(supabaseUrl: string, supabase
         return { success: false, code: "BLOCK_FULL" };
       }
 
+      console.error("Supabase create_appointment failed:", response);
       return { success: false, code: "SERVER_ERROR" };
     }
   };
