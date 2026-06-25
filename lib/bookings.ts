@@ -1,7 +1,7 @@
 import type { AppointmentApiResponse, CreateAppointmentRpcInput } from "../types/appointment";
 import { BOOKING_CAPACITY, getTimeBlockForAppointmentTime, isBookableTimeSlot, isWithinBookingWindow } from "./slots";
 import { parseAppointmentRequest } from "./validation";
-import type { AppointmentRpcClient } from "./supabase";
+import type { AppointmentRpcClient } from "./appointment-db";
 import type { BookingEmailSender } from "./email";
 
 export interface BookingServiceDeps {

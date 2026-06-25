@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { processAppointmentSubmission } from "../../lib/bookings";
-import type { AppointmentRpcClient } from "../../lib/supabase";
+import type { AppointmentRpcClient } from "../../lib/appointment-db";
 import type { BookingEmailSender } from "../../lib/email";
 
 function buildValidRequest() {

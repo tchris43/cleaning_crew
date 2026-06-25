@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { createAppointmentHandler } from "../../lib/appointment-route";
-import type { AppointmentRpcClient } from "../../lib/supabase";
+import type { AppointmentRpcClient } from "../../lib/appointment-db";
 import type { BookingEmailSender } from "../../lib/email";
 
 class InMemoryCapacityRpc implements AppointmentRpcClient {

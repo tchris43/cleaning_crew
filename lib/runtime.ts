@@ -1,20 +1,19 @@
 import { createAppointmentHandler } from "./appointment-route";
+import { createNeonAppointmentRpcClient, getDatabaseUrl } from "./appointment-db";
 import { createResendBookingEmailSender } from "./email";
-import { createSupabaseAppointmentRpcClient } from "./supabase";
 import type { BookingServiceDeps } from "./bookings";
 
 export function createProductionBookingDependencies(): BookingServiceDeps {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const databaseUrl = getDatabaseUrl();
   const resendApiKey = process.env.RESEND_API_KEY;
   const ownerNotificationEmail = process.env.OWNER_NOTIFICATION_EMAIL;
 
-  if (!supabaseUrl || !supabaseServiceRoleKey || !resendApiKey || !ownerNotificationEmail) {
+  if (!databaseUrl || !resendApiKey || !ownerNotificationEmail) {
     throw new Error("Missing required environment variables for booking runtime.");
   }
 
   return {
-    rpcClient: createSupabaseAppointmentRpcClient(supabaseUrl, supabaseServiceRoleKey),
+    rpcClient: createNeonAppointmentRpcClient(databaseUrl),
     emailSender: createResendBookingEmailSender(resendApiKey, ownerNotificationEmail),
     now: () => new Date()
   };
